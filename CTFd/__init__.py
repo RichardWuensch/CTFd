@@ -295,6 +295,7 @@ def create_app(config="CTFd.config.Config"):
         from CTFd.teams import teams
         from CTFd.users import users
         from CTFd.views import views
+        from CTFd.attackbox import attackbox
 
         app.register_blueprint(views)
         app.register_blueprint(teams)
@@ -304,6 +305,7 @@ def create_app(config="CTFd.config.Config"):
         app.register_blueprint(auth)
         app.register_blueprint(api)
         app.register_blueprint(events)
+        app.register_blueprint(attackbox)
 
         app.register_blueprint(admin)
 
@@ -316,3 +318,4 @@ def create_app(config="CTFd.config.Config"):
         init_cli(app)
 
         return app
+
