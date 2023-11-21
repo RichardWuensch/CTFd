@@ -39,7 +39,6 @@
           <div class="pt-5">
             <div class="category-header mb-3">
               <h3 x-text="category"></h3>
-              <!--<form action="/attackbox" target="_blank">-->
                 <button type="submit" onclick="startAtackBox()">Attackbox starten</button>
                 <script>
                     async function startAtackBox() {
@@ -49,28 +48,6 @@
                         <!--TODO message dass es einige Zeit dauert + das einige Browser PopUps blockieren-->
                     }
                 </script>
-               <!--</form>-->
-             <!-- <button id="generateButton">Generate URL and Open in New Tab</button>
-
-
-    <script>
-        document.getElementById('generateButton').addEventListener('click', function() {
-            // Eine AJAX-Anfrage an die Flask-Route senden, um die URL zu generieren
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/attackbox', true);
-            xhr.onload = async function() {
-                if (xhr.status == 200) {
-                    // Die generierte URL abrufen
-                    var generatedUrl = xhr.responseText;
-                    console.log(generatedUrl)
-
-                    // Ein neuen Tab öffnen
-                    window.open('http://192.168.178.74:8080/guacamole-1.5.3/#/', '_blank');
-                }
-            };
-            xhr.send();
-        });
-    </script>-->
             </div>
 
             <div class="category-challenges d-flex flex-column">
