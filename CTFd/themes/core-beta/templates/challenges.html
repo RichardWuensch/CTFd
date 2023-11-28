@@ -41,14 +41,22 @@
                 <button class="attackbox-button btn-primary float-right"
                         type="submit" onclick="startAtackBox()">Attackbox starten</button>
                 <script>
+                    let vm_name='';
                     async function startAtackBox() {
                         const response = await fetch('/attackbox');
-                        const url = await response.text();
-                        window.open(url);
+                        const json = JSON.parse(await response.text());
+                        window.open(json.url);
+                        vm_name= json.vm;
                         <!--TODO message dass es einige Zeit dauert + das einige Browser PopUps blockieren-->
                     }
+                    function showAlert() {  //todo umbenennen
+                        const response = fetch('/stop_attackbox/'+vm_name);
+                        // hier wird was benötigt, was sicher stellt, dass die VM heruntergefahren wurde
+                    }
+
+                    window.addEventListener("beforeunload", showAlert);
                 </script>
-                    </div>
+              </div>
             <div class="category-header mb-3">
               <h3 x-text="category"></h3>
 
