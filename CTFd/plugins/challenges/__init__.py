@@ -1,4 +1,7 @@
+import time
+
 from flask import Blueprint
+import json
 
 from CTFd.models import (
     ChallengeFiles,
@@ -11,7 +14,9 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins.challenges.change_token import ssh_connect
 from CTFd.plugins.flags import FlagException, get_flag_class
+from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
 
@@ -122,7 +127,30 @@ class BaseChallenge(object):
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
         for flag in flags:
             try:
-                if get_flag_class(flag.type).compare(flag, submission):
+                if get_flag_class(flag.type).compare(flag, submission): # -------------------------- vmRestart -> hier findet vergleich mit DB statt
+                    schema = FlagSchema()
+                    import random
+                    chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                             'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                    new_token = random.choice(chars) + random.choice(chars) + random.choice(chars) + random.choice(
+                        chars) + '-' + random.choice(chars) + random.choice(chars) + random.choice(
+                        chars) + random.choice(chars)
+
+                    s = '{"content": "'+new_token+'", "data": "' + flag.data + '", "type": "' + flag.type + '", "id": "' + str(flag.id) + '"}'
+                    req = json.loads(s)
+                    response = schema.load(req, session=db.session, instance=flag, partial=True)
+
+                    if response.errors:
+                        print('return {"success": False, "errors": response.errors}, 400')
+
+                    db.session.commit()
+
+                    ssh_connect(challenge.connection_info, 'root', 'alpine', new_token)
+
+                    #response = schema.dump(response.data)
+                    #db.session.close()
+
+                    #print('return {"success": True, "data": response.data}')
                     return True, "Correct"
             except FlagException as e:
                 return False, str(e)
