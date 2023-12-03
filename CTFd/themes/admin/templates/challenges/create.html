@@ -59,8 +59,50 @@
 				Use this to specify the ip address of the victims machine
 			</small>
 		</label>
-		<input type="text" class="form-control chal-connection-info" name="connection_info" placeholder="Enter ip address" required">
+		<input type="text" class="form-control chal-connection-info" name="connection_info" placeholder="Enter ip address" required>
 	</div>
+	{% endblock %}
+
+    {% block vm_name %}
+	<div class="form-group">
+		<label>
+			VM name<br>
+			<small class="form-text text-muted">
+				Use this to specify the vm name of the victims machine
+			</small>
+		</label>
+		<input type="text" class="form-control" name="vm_name" placeholder="Enter vm name" required>
+	</div>
+	{% endblock %}
+
+    {% block vm_password %}
+    <div class="form-group">
+        <label for="vm_password">VM Password<br>
+			<small class="form-text text-muted">
+				Use this to enter the password to the victims machine<br>
+                Select the option "RSA Key" if SSH Brute-Force should not be an attack vector
+			</small></label>
+        <select class="form-control custom-select" id="vm_password_type" name="vm_password_type">
+            <option value="Password" selected>Password type: Password</option>
+            <option value="RSA Key">Password type: RSA Key</option>
+        </select>
+        <div style="height: 10px;"></div>
+        <div id="password-fields">
+            <input type="text" class="form-control" name="vm_password" placeholder="Enter password" required>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('vm_password_type').addEventListener('change', function() {
+        var selectedValue = this.value;
+        var passwordFields = document.getElementById('password-fields');
+        if (selectedValue === 'Password') {
+            passwordFields.innerHTML = '<input type="text" class="form-control" name="vm_password" placeholder="Enter password" required>';
+        } else if (selectedValue === 'RSA Key') {
+            passwordFields.innerHTML = '<small class="form-text text-muted">With this option an RSA-Key is used for changing the flag inside the VM - this should protect against SSH Brute-Force Attacks</small>';
+        }
+    });
+    </script>
 	{% endblock %}
 
 	{% block state %}

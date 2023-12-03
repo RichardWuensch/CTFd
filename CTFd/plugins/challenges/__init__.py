@@ -14,7 +14,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.challenges.change_token import ssh_connect
+from CTFd.plugins.challenges.change_token import ssh_connect, restore_snapshot
 from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.uploads import delete_file
@@ -63,6 +63,9 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "vm_name": challenge.vm_name,
+            "vm_password": challenge.vm_password,
+            "vm_password_type": challenge.vm_password_type,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
@@ -144,13 +147,8 @@ class BaseChallenge(object):
                         print('return {"success": False, "errors": response.errors}, 400')
 
                     db.session.commit()
+                    restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token)
 
-                    ssh_connect(challenge.connection_info, 'root', 'alpine', new_token)
-
-                    #response = schema.dump(response.data)
-                    #db.session.close()
-
-                    #print('return {"success": True, "data": response.data}')
                     return True, "Correct"
             except FlagException as e:
                 return False, str(e)

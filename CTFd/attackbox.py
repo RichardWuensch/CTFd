@@ -17,15 +17,16 @@ vboxmanage_path = r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
 async def run_attackbox():
     cloned_vm_name = "attackbox_Clon" + str(time.time_ns())
 
-    # VM klonen
+    # clone vm
     subprocess.run([vboxmanage_path, 'clonevm', 'Ubuntu Server', '--name', cloned_vm_name, '--register'])
 
-    # Befehl zum Starten der geklonten VM
+    # start vm
     subprocess.run([vboxmanage_path, 'startvm', cloned_vm_name, '--type=headless'])
 
+    #wait some seconds until the vm ist cloned and booted
     time.sleep(40)
 
-    # holt sich die IP der erzeugten Maschine
+    # get the IP of the vm to create the link to guacamole
     result = subprocess.run(
         [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'ubuntu', '--password', 'ubuntu', '--',
          '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
@@ -43,11 +44,9 @@ async def run_attackbox():
 
     ipaddress = result.stdout.decode().replace("\n", "")
 
-    # das sollte gelogged werden damit man weiß, wer welche Maschine zu welcher Zeit mit welcher IP hatte
+    # TODO das sollte gelogged werden damit man weiß, wer welche Maschine zu welcher Zeit mit welcher IP hatte
     print(get_current_user().email + " - " + cloned_vm_name + " - " + ipaddress)
 
-    # retuned die URL mit der IP der erzeugten AttackBox
-    # return f'http://{ipaddress}:8080/guacamole-1.5.3/#/'
     return {'url': f'http://{ipaddress}:8080/guacamole-1.5.3/#/', 'vm': cloned_vm_name}
 
 
@@ -67,12 +66,9 @@ def stop_attackbox(data=None):
     subprocess.run([vboxmanage_path, 'controlvm', data, 'poweroff'])
     time.sleep(5)
     try:
-        # Befehl zum Entfernen der VM + Festplatten
-        delete_command = [vboxmanage_path, 'unregistervm', data, '--delete']
+        # delete the vm and his disk
+        subprocess.run([vboxmanage_path, 'unregistervm', data, '--delete'], check=True)
 
-        # VM und Festplatten löschen
-        subprocess.run(delete_command, check=True)
-
-        print(f"Die VM {data} wurde vollständig gelöscht.")
+        print(f"The vm {data} is deleted successfully.")
     except subprocess.CalledProcessError as e:
-        print(f"Fehler beim Löschen der VM: {e}")
+        print(f"Error by deleting the vm: {e}")

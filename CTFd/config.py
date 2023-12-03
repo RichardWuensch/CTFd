@@ -262,6 +262,7 @@ class TestingConfig(ServerConfig):
     CACHE_TYPE = "simple"
     CACHE_THRESHOLD = 500
     SAFE_MODE = True
+    VIRTUALBOX_HOME = "C:\\Users\\richa\\Desktop\\FHWS\\7.Semester\\VirtualBoxSDK-7.0.12-159484\\sdk"
 
 
 # Actually initialize ServerConfig to allow us to add more attributes on
