@@ -4,7 +4,53 @@ import paramiko
 import virtualbox
 import time
 
+import asyncio
+import subprocess
+import time
 
+
+async def async_ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    try:
+        if vm_password_type == "RSA Key":
+            private_key_path = 'C:\\Users\\richa\\Desktop\\FHWS\\7.Semester\\key.pem'
+            private_key = paramiko.RSAKey.from_private_key_file(private_key_path)
+            ssh.connect(hostname=vm_ip, username=ssh_username, pkey=private_key)
+        else:
+            ssh.connect(hostname=vm_ip, username=ssh_username, password=ssh_password)
+        ssh.exec_command('echo "' + token + '"> token')
+        ssh.close()
+
+    except paramiko.AuthenticationException:
+        print("Error: Authentication failed")
+    except paramiko.SSHException as ssh_err:
+        print(f"Failed SSH-Connection: {ssh_err}")
+
+
+vboxmanage_path = r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
+
+
+async def async_run_vm(vm_name):
+    subprocess.run([vboxmanage_path, 'startvm', vm_name, '--type=headless'])
+
+
+async def async_stop_vm(vm_name):
+    subprocess.run([vboxmanage_path, 'controlvm', vm_name, 'poweroff'])
+
+
+async def async_restore_snapshot(vm_name, vm_ip, ssh_username, ssh_password, vm_password_type, token):
+    await async_stop_vm(vm_name)
+    await asyncio.sleep(5)
+    subprocess.run([vboxmanage_path, 'snapshot', vm_name, 'restorecurrent'])
+    await asyncio.sleep(10)
+    await async_run_vm(vm_name)
+    await asyncio.sleep(30)
+    await async_ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token)
+
+
+'''
 def ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -44,6 +90,9 @@ def restore_snapshot(vm_name, vm_ip, ssh_username, ssh_password, vm_password_typ
     run_vm(vm_name)
     time.sleep(30)
     ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token)
+    
+    ----------------------------------------------------------------------------------------------------------
+    '''
 
 '''
 def shutdown_vm(vm, session):

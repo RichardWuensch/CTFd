@@ -1,7 +1,9 @@
+import threading
 import time
 
 from flask import Blueprint
 import json
+import asyncio
 
 from CTFd.models import (
     ChallengeFiles,
@@ -14,7 +16,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.challenges.change_token import ssh_connect, restore_snapshot
+from CTFd.plugins.challenges.change_token import async_restore_snapshot
 from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.uploads import delete_file
@@ -147,7 +149,10 @@ class BaseChallenge(object):
                         print('return {"success": False, "errors": response.errors}, 400')
 
                     db.session.commit()
-                    restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token)
+                    #thread = threading.Thread(target=restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token), daemon=True)
+                    #thread.start()
+                    asyncio.run(async_restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token))
+                    # TODO root wird bei windows nicht funktionieren
 
                     return True, "Correct"
             except FlagException as e:
