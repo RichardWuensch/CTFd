@@ -216,7 +216,7 @@ def register():
             .filter_by(email=email_address)
             .first()
         )
-        pass_short = len(password) == 0
+        pass_short = len(password) < 8
         pass_long = len(password) > 128
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
@@ -275,7 +275,7 @@ def register():
         if emails:
             errors.append("That email has already been used")
         if pass_short:
-            errors.append("Pick a longer password")
+            errors.append("Pick a password with at least 8 character")
         if pass_long:
             errors.append("Pick a shorter password")
         if name_len:
