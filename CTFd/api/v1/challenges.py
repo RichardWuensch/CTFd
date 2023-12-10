@@ -136,7 +136,6 @@ class ChallengeList(Resource):
 
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
-
         # Get a cached mapping of challenge_id to solve_count
         solve_counts = get_solve_counts_for_challenges(admin=admin_view)
 
@@ -144,6 +143,8 @@ class ChallengeList(Resource):
         if authed():
             user = get_current_user()
             user_solves = get_solve_ids_for_user_id(user_id=user.id)
+            if user.type == "admin":
+                admin_view = True
         else:
             user_solves = set()
 
@@ -208,6 +209,7 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
+                    "connection_info": challenge.connection_info,
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
