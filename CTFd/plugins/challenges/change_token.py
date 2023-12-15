@@ -51,6 +51,7 @@ async def async_restore_snapshot(vm_name, vm_ip, ssh_username, ssh_password, vm_
 
 
 '''
+dfs
 def ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
