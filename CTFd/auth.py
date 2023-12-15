@@ -201,6 +201,7 @@ def register():
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
+        password_repeat = request.form.get("passwordRepeat", "").strip()
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
@@ -274,6 +275,8 @@ def register():
             errors.append("Your user name cannot be an email address")
         if emails:
             errors.append("That email has already been used")
+        if password != password_repeat:
+            errors.append("The passwords are not the same")
         if pass_short:
             errors.append("Pick a password with at least 8 character")
         if pass_long:

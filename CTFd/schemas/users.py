@@ -144,7 +144,6 @@ class UserSchema(ma.ModelSchema):
                     raise ValidationError(
                         "Your previous password is incorrect", field_names=["confirm"]
                     )
-
                 if existing_user:
                     raise ValidationError(
                         "Email address has already been used", field_names=["email"]
@@ -160,6 +159,7 @@ class UserSchema(ma.ModelSchema):
     @pre_load
     def validate_password_confirmation(self, data):
         password = data.get("password")
+        password_repeat = data.get("passwordRepeat")
         confirm = data.get("confirm")
         target_user = get_current_user()
 
@@ -182,6 +182,10 @@ class UserSchema(ma.ModelSchema):
                     plaintext=confirm, ciphertext=target_user.password
                 )
                 if test is True:
+                    if password != password_repeat:
+                        raise ValidationError(
+                            "Your new passwords are not the same", field_names=["confirm"]
+                        )
                     return data
                 else:
                     raise ValidationError(

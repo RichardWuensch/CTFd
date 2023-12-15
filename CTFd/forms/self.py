@@ -17,6 +17,7 @@ def SettingsForm(*args, **kwargs):
         email = StringField(_l("Email"))
         language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
         password = PasswordField(_l("Password"))
+        passwordRepeat = PasswordField(_l("Repeat new Password"))
         confirm = PasswordField(_l("Current Password"))
         affiliation = StringField(_l("Affiliation"))
         website = URLField(_l("Website"))

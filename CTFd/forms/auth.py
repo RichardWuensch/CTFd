@@ -20,6 +20,7 @@ def RegistrationForm(*args, **kwargs):
         )
         email = EmailField(_l("Email"), validators=[InputRequired()])
         password = PasswordField(_l("Password"), validators=[InputRequired()])
+        passwordRepeat = PasswordField(_l("Repeat Password"), validators=[InputRequired()])
         submit = SubmitField(_l("Submit"))
 
         @property
