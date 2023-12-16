@@ -1,6 +1,6 @@
 from flask import session
 from flask_babel import lazy_gettext as _l
-from wtforms import PasswordField, SelectField, StringField, TextAreaField
+from wtforms import PasswordField, SelectField, StringField, TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
@@ -22,6 +22,7 @@ def SettingsForm(*args, **kwargs):
         affiliation = StringField(_l("Affiliation"))
         website = URLField(_l("Website"))
         country = SelectField(_l("Country"), choices=SELECT_COUNTRIES_LIST)
+        hidden = BooleanField(_l("Hide"))
         submit = SubmitField(_l("Submit"))
 
         @property

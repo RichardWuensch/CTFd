@@ -207,6 +207,7 @@ def register():
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
         registration_code = str(request.form.get("registration_code", ""))
+        hidden = request.form.get("hidden")
 
         name_len = len(name) == 0
         names = (
@@ -301,6 +302,11 @@ def register():
         else:
             with app.app_context():
                 user = Users(name=name, email=email_address, password=password)
+
+                if hidden == 'y':
+                    user.hidden = True
+                else:
+                    user.hidden = False
 
                 if website:
                     user.website = website

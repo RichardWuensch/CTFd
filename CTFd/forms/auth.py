@@ -1,5 +1,5 @@
 from flask_babel import lazy_gettext as _l
-from wtforms import PasswordField, StringField
+from wtforms import PasswordField, StringField, BooleanField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
@@ -21,6 +21,7 @@ def RegistrationForm(*args, **kwargs):
         email = EmailField(_l("Email"), validators=[InputRequired()])
         password = PasswordField(_l("Password"), validators=[InputRequired()])
         passwordRepeat = PasswordField(_l("Repeat Password"), validators=[InputRequired()])
+        hidden = BooleanField(_l("Hide"))
         submit = SubmitField(_l("Submit"))
 
         @property

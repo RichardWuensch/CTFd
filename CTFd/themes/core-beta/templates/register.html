@@ -57,6 +57,14 @@
               {{ form.passwordRepeat(class="form-control", value=passwordRepeat) }}
             </div>
 
+            <div class="mb-3">
+              {{ form.hidden(class="form-check-label") }}
+                <b>{{ form.hidden.label(class="form-label") }}</b>
+              <small class="form-text text-muted">
+				<br>If you don't want to be seen on the public scoreboard
+              </small>
+			</div>
+
             {{ form.nonce() }}
 
             {{ render_extra_fields(form.extra) }}

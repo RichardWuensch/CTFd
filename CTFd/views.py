@@ -377,6 +377,7 @@ def settings():
         website=user.website,
         affiliation=user.affiliation,
         country=user.country,
+        hidden=user.hidden,
         tokens=tokens,
         prevent_name_change=prevent_name_change,
         infos=infos,

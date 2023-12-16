@@ -85,6 +85,13 @@
                   <b>{{ form.country.label(class="form-label") }}</b>
                   {{ form.country(class="form-control form-select", value=country) }}
                 </div>
+                <div class="mb-3">
+                  {{ form.hidden(class="form-check-label", checked=hidden) }}
+                    <b>{{ form.hidden.label(class="form-label") }}</b>
+                  <small class="form-text text-muted">
+					<br>If you don't want to be seen on the public scoreboard
+				  </small>
+				</div>
 
                 <hr>
 

@@ -53,6 +53,7 @@ class UserSchema(ma.ModelSchema):
     language = field_for(Users, "language", validate=[validate_language])
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password", required=True, allow_none=False)
+    hidden = field_for(Users, "hidden", required=True, allow_none=False)
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -311,7 +312,7 @@ class UserSchema(ma.ModelSchema):
                 if field.editable is False and field.public is False:
                     removed_field_ids.append(field.id)
 
-        # Rebuild fuilds
+        # Rebuild fields
         fields = data.get("fields")
         if fields:
             data["fields"] = [
@@ -338,6 +339,7 @@ class UserSchema(ma.ModelSchema):
             "country",
             "affiliation",
             "bracket",
+            "hidden",
             "id",
             "oauth_id",
             "password",
