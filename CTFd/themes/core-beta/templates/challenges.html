@@ -8,14 +8,15 @@
       </h1>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button class="attackbox-button btn-primary float-right"
-                        type="submit" onclick="startAtackBox()">Attackbox starten</button>
+                        type="submit" onclick="startAttackBox()">Attackbox starten</button>
                 <script>
                     let vm_name='';
-                    async function startAtackBox() {
+                    async function startAttackBox() {
                         const response = await fetch('/attackbox');
                         const json = JSON.parse(await response.text());
                         window.open(json.url);
                         vm_name= json.vm;
+                        console.log(json.password)
                         <!--TODO message dass es einige Zeit dauert + das einige Browser PopUps blockieren-->
                     }
                     function showAlert() {  //todo umbenennen

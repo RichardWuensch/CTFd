@@ -9,17 +9,14 @@ import subprocess
 import time
 
 
-async def async_ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token):
+async def async_ssh_connect(vm_ip, ssh_username, token):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     try:
-        if vm_password_type == "RSA Key":
-            private_key_path = 'C:\\Users\\richa\\Desktop\\FHWS\\7.Semester\\key.pem'
-            private_key = paramiko.RSAKey.from_private_key_file(private_key_path)
-            ssh.connect(hostname=vm_ip, username=ssh_username, pkey=private_key)
-        else:
-            ssh.connect(hostname=vm_ip, username=ssh_username, password=ssh_password)
+        private_key_path = 'C:\\Users\\richa\\Desktop\\FHWS\\7.Semester\\key.pem'
+        private_key = paramiko.RSAKey.from_private_key_file(private_key_path)
+        ssh.connect(hostname=vm_ip, username=ssh_username, pkey=private_key)
         ssh.exec_command('echo "' + token + '"> token')
         ssh.close()
 
@@ -40,14 +37,14 @@ async def async_stop_vm(vm_name):
     subprocess.run([vboxmanage_path, 'controlvm', vm_name, 'poweroff'])
 
 
-async def async_restore_snapshot(vm_name, vm_ip, ssh_username, ssh_password, vm_password_type, token):
+async def async_restore_snapshot(vm_name, vm_ip, ssh_username, token):
     await async_stop_vm(vm_name)
     await asyncio.sleep(5)
     subprocess.run([vboxmanage_path, 'snapshot', vm_name, 'restorecurrent'])
     await asyncio.sleep(10)
     await async_run_vm(vm_name)
     await asyncio.sleep(30)
-    await async_ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token)
+    await async_ssh_connect(vm_ip, ssh_username, token)
 
 
 '''

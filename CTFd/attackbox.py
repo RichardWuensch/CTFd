@@ -18,7 +18,7 @@ async def run_attackbox():
     cloned_vm_name = "attackbox_Clon" + str(time.time_ns())
 
     # clone vm
-    subprocess.run([vboxmanage_path, 'clonevm', 'Ubuntu Server', '--name', cloned_vm_name, '--register'])
+    subprocess.run([vboxmanage_path, 'clonevm', 'Hacker\'s Playground', '--name', cloned_vm_name, '--register'])
 
     # start vm
     subprocess.run([vboxmanage_path, 'startvm', cloned_vm_name, '--type=headless'])
@@ -28,32 +28,38 @@ async def run_attackbox():
 
     # get the IP of the vm to create the link to guacamole
     result = subprocess.run(
-        [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'ubuntu', '--password', 'ubuntu', '--',
+        [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali', '--',
          '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
         capture_output=True)
 
     counter = 0
-    while result.stdout.decode() == '' and counter <= 5: # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
+    while result.stdout.decode() == '' and counter <= 10: # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
         print(counter)
         counter = counter + 1
         result = subprocess.run(
-            [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'ubuntu', '--password', 'ubuntu',
+            [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
              '--', '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
             capture_output=True)
         time.sleep(5)
 
     ipaddress = result.stdout.decode().replace("\n", "")
 
+    password = subprocess.run(
+        [vboxmanage_path, 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
+         '--', '/bin/bash', '-c', 'cat /etc/guacamole/passwd.txt'],
+        capture_output=True)
+
     # TODO das sollte gelogged werden damit man weiß, wer welche Maschine zu welcher Zeit mit welcher IP hatte
     print(get_current_user().email + " - " + cloned_vm_name + " - " + ipaddress)
-
-    return {'url': f'http://{ipaddress}:8080/guacamole-1.5.3/#/', 'vm': cloned_vm_name}
+    print(password.stdout.decode())
+    return {'url': f'http://{ipaddress}:8080/guacamole/#/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
 
 
 @attackbox.route('/attackbox')
 @require_complete_profile
 @during_ctf_time_only
 @require_verified_emails
+#Todo sollte auth sein oder?
 def start_attackbox():
     url = asyncio.run(run_attackbox())  # anderer Name falls das klappt
     return url
