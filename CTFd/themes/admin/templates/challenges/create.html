@@ -56,10 +56,10 @@
 		<label>
 			Connection Info<br>
 			<small class="form-text text-muted">
-				Use this to specify the ip address of the victims machine
+				Use this to specify a link, hostname, or connection instructions for your challenge.
 			</small>
 		</label>
-		<input type="text" class="form-control chal-connection-info" name="connection_info" placeholder="Enter ip address" required>
+		<input type="text" class="form-control chal-connection-info" name="connection_info" placeholder="Enter connection info">
 	</div>
 	{% endblock %}
 
@@ -68,14 +68,26 @@
 		<label>
 			VM name<br>
 			<small class="form-text text-muted">
-				Use this to specify the vm name of the victims machine
+				Use this to specify the name of the victims machine that is used in VirtualBox. This is used to restore the vm after an attack. If there is no vm for this challenge (e.g. if you use only a file for a forensic task) leave the field empty.
 			</small>
 		</label>
-		<input type="text" class="form-control" name="vm_name" placeholder="Enter vm name" required>
+		<input type="text" class="form-control" name="vm_name" placeholder="Enter vm name">
 	</div>
 	{% endblock %}
 
-    {% block change_token %}
+    {% block victims_connection %}
+	<div class="form-group">
+		<label>
+			Victims Connection<br>
+			<small class="form-text text-muted">
+				Use this to specify the SSH connection parameters for the victims machine in the form username@ipaddress (eg root@10.0.0.1). If there is no SSH connection possible or the challenge has no vm leave the field empty.
+			</small>
+		</label>
+		<input type="text" class="form-control chal-connection-info" name="victims_connection" placeholder="Enter SSH connection parameter">
+	</div>
+	{% endblock %}
+
+   <!-- {% block change_token %}
     <div class="form-group">
     <label for="change_token">Change Token<br>
         <small class="form-text text-muted">
@@ -86,7 +98,7 @@
     <input type="checkbox" id="change_token" name="change_token" value="change_token">
     Change Token
     </div>
-    {% endblock %}
+    {% endblock %}-->
 
 	{% block state %}
 	<input type="hidden" name="state" value="hidden">

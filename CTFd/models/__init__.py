@@ -121,7 +121,7 @@ class Challenges(db.Model):
     state = db.Column(db.String(80), nullable=False, default="visible")
     requirements = db.Column(db.JSON)
     vm_name = db.Column(db.Text)
-    change_token = db.Column(db.Boolean, default=False)
+    victims_connection = db.Column(db.Text)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")

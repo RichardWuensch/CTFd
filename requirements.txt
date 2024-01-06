@@ -185,6 +185,6 @@ zope-interface==5.2.0
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
 
-paramiko~=3.3.1
+paramiko~=7.2.0
 virtualbox~=2.1.1
 pyvbox~=2.1.1

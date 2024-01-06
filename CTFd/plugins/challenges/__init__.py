@@ -66,7 +66,7 @@ class BaseChallenge(object):
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
             "vm_name": challenge.vm_name,
-            "change_token": challenge.change_token,
+            "victims_connection": challenge.victims_connection,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
@@ -150,8 +150,7 @@ class BaseChallenge(object):
                     db.session.commit()
                     #thread = threading.Thread(target=restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token), daemon=True)
                     #thread.start()
-                    asyncio.run(async_restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', new_token))
-                    # TODO root wird bei windows nicht funktionieren -> OS muss erkannt werden
+                    asyncio.run(async_restore_snapshot(challenge.vm_name, challenge.victims_connection, new_token))
 
                     return True, "Correct"
             except FlagException as e:
