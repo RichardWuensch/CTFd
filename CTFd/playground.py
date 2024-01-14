@@ -9,13 +9,14 @@ from CTFd.utils.decorators import (
 import subprocess
 import time
 
+from CTFd.utils.logging import log
 from CTFd.utils.user import get_current_user
 
-attackbox = Blueprint("attackbox", __name__)
+playground = Blueprint("playground", __name__)
 vboxmanage_path = r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
 
 
-async def run_attackbox():
+async def run_playground():
     cloned_vm_name = get_current_user().email + "_" + str(time.time_ns())
 
     # clone vm
@@ -49,42 +50,48 @@ async def run_attackbox():
          '--', '/bin/bash', '-c', 'cat /etc/guacamole/passwd.txt'],
         capture_output=True)
 
-    # TODO das sollte gelogged werden damit man weiß, wer welche Maschine zu welcher Zeit mit welcher IP hatte
-    print(get_current_user().email + " - " + cloned_vm_name + " - " + ipaddress)
-    print(password.stdout.decode())
+    log(
+        "playgrounds",
+        format="[{date}] {ip} - {email} uses the vm {vm} with the IP Address {ipaddress}",
+        email=get_current_user().email,
+        vm=cloned_vm_name,
+        ipaddress=ipaddress
+    )
     return {'url': f'http://{ipaddress}:8080/guacamole/#/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
 
 
-@attackbox.route('/attackbox')
+@playground.route('/playground')
 @require_complete_profile
 @during_ctf_time_only
 @require_verified_emails
-# Todo sollte auth sein oder?
-def start_attackbox():
+def start_playground():
     all_vms = subprocess.run([vboxmanage_path, "list", "vms"], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     if len([element for element in vm_names if element.startswith("admin@admin")]) < 1:
-        url = asyncio.run(run_attackbox())  # Todo anderer Name falls das klappt
+        url = asyncio.run(run_playground())
         return url
     else:
         return "You cannot create a second machine"
 
 
-@attackbox.route('/stop_attackbox')
+@playground.route('/stop_playground')
 @require_complete_profile
 @during_ctf_time_only
 @require_verified_emails
-def stop_attackbox():
+def stop_playground():
     all_vms = subprocess.run([vboxmanage_path, "list", "vms"], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
-    vm_name = [element for element in vm_names if element.startswith("admin@admin")][0]
-    print(vm_name)
-    subprocess.run([vboxmanage_path, 'controlvm', vm_name, 'poweroff'])
-    time.sleep(5)
-    try:
-        # delete the vm and his disk
-        subprocess.run([vboxmanage_path, 'unregistervm', vm_name, '--delete'], check=True)
+    vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
+    if len(vm_name) > 0:
+        user = vm_name[0]
+        subprocess.run([vboxmanage_path, 'controlvm', user, 'poweroff'])
+        time.sleep(5)
+        try:
+            # delete the vm and his disk
+            subprocess.run([vboxmanage_path, 'unregistervm', user, '--delete'], check=True)
 
-        return "Successful"
-    except subprocess.CalledProcessError as e:
-        return "Error"
+            return "Successful"
+        except subprocess.CalledProcessError as e:
+            return "Error"
+    else:
+        return "No running playground"
