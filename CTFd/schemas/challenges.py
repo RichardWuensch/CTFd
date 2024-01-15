@@ -28,13 +28,12 @@ class ChallengeRequirementsValidator(validate.Validator):
 
 class ChallengeVMValidator(validate.Validator):
     def __call__(self, value):
-        vboxmanage_path = r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
-        result = subprocess.run([vboxmanage_path, "list", "vms"], capture_output=True).stdout.decode()
+        result = subprocess.run(['VBoxManage', "list", "vms"], capture_output=True).stdout.decode()
 
         vm_names = [line.split("\"")[1].strip('"') for line in result.splitlines()]
 
         if vm_names.__contains__(value):
-            result = subprocess.run([vboxmanage_path, "showvminfo", "--machinereadable", value],
+            result = subprocess.run(['VBoxManage', "showvminfo", "--machinereadable", value],
                                     capture_output=True).stdout.decode().splitlines()
             vm_info = {}
 

@@ -29,26 +29,23 @@ async def async_ssh_connect(victims_connection, token):
         print(f"Failed SSH-Connection: {ssh_err}")
 
 
-vboxmanage_path = r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe'
-
-
 async def async_run_vm(vm_name):
-    subprocess.run([vboxmanage_path, 'startvm', vm_name, '--type=headless'])
+    subprocess.run(['VBoxManage', 'startvm', vm_name, '--type=headless'])
 
 
 async def async_stop_vm(vm_name):
-    subprocess.run([vboxmanage_path, 'controlvm', vm_name, 'poweroff'])
+    subprocess.run(['VBoxManage', 'controlvm', vm_name, 'poweroff'])
 
 
 async def async_restore_snapshot(vm_name, victims_connection, token):
     await async_stop_vm(vm_name)
-    #await asyncio.sleep(5)
-    subprocess.run([vboxmanage_path, 'snapshot', vm_name, 'restorecurrent'])
-    #await asyncio.sleep(10)
+    # await asyncio.sleep(5)
+    subprocess.run(['VBoxManage', 'snapshot', vm_name, 'restorecurrent'])
+    # await asyncio.sleep(10)
     await async_run_vm(vm_name)
-    #await asyncio.sleep(30)
+    # await asyncio.sleep(30)
     if victims_connection != "":
-        await async_ssh_connect(victims_connection,  token)
+        await async_ssh_connect(victims_connection, token)
 
 
 '''
