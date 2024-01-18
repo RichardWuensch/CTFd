@@ -79,6 +79,8 @@ class DynamicValueChallenge(BaseChallenge):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "vm_name": challenge.vm_name,
+            "victims_connection": challenge.victims_connection,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
