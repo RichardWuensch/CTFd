@@ -37,7 +37,7 @@ cffi==1.15.0
     #   pybluemonday
 charset-normalizer==2.0.12
     # via requests
-click~=8.1.7
+click==7.1.2
     # via flask
 cmarkgfm==2022.10.27
     # via -r requirements.in
@@ -47,7 +47,7 @@ dataset==1.5.2
     # via -r requirements.in
 docutils==0.15.2
     # via botocore
-flask~=2.3.3
+flask==2.0.3
     # via
     #   -r requirements.in
     #   flask-babel
@@ -154,7 +154,7 @@ six==1.15.0
     #   jsonschema
     #   python-dateutil
     #   tenacity
-sqlalchemy~=2.0.23
+sqlalchemy==1.4.48
     # via
     #   -r requirements.in
     #   alembic
