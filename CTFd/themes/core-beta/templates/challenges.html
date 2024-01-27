@@ -41,6 +41,8 @@
                             alert("You cannot create a second machine");
                         } else {
                             const json = JSON.parse(resp);
+                            console.log(json.url);
+                            console.log(json.password);
                             window.open(json.url);
                             document.getElementById("loader").style.display = "none";
                             vm_name = json.vm;
