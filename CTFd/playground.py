@@ -34,7 +34,7 @@ async def run_playground():
         capture_output=True)
 
     counter = 0
-    while result.stdout.decode() == '' and counter <= 10:  # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
+    while result.stdout.decode() == '' and counter <= 20:  # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
         counter = counter + 1
         result = subprocess.run(
             ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
@@ -56,7 +56,7 @@ async def run_playground():
         vm=cloned_vm_name,
         ipaddress=ipaddress
     )
-    return {'url': f'http://{ipaddress}:8080/guacamole/#/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
+    return {'url': f'http://194.95.220.15:8080/{ipaddress}/guacamole/#/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
 
 
 @playground.route('/playground')
