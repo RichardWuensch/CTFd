@@ -40,8 +40,9 @@
                             document.getElementById("loader").style.display = "none";
                             alert("You cannot create a second machine");
                         } else {
+                            console.log(resp)
                             const json = JSON.parse(resp);
-                            console.log(resp);
+                            console.log(json);
                             console.log(json.url);
                             console.log(json.password);
                             window.open(json.url);
