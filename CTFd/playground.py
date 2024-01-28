@@ -56,7 +56,7 @@ async def run_playground():
         vm=cloned_vm_name,
         ipaddress=ipaddress
     )
-    return {'url': f'https://194.95.220.15:443/{ipaddress}/guacamole/#/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
+    return {'url': f'https://194.95.220.15:443/{ipaddress}/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
 
 
 @playground.route('/playground')
