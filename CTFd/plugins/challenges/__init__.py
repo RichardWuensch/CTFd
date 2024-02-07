@@ -132,7 +132,7 @@ class BaseChallenge(object):
         for flag in flags:
             try:
                 if get_flag_class(flag.type).compare(flag, submission):
-                    if challenge.victims_connection == "" or challenge.victims_connection == "None":
+                    if challenge.victims_connection == "" or challenge.victims_connection is None:
                         return True, "Correct"
                     else:
                         schema = FlagSchema()

@@ -28,7 +28,7 @@ class ChallengeRequirementsValidator(validate.Validator):
 
 class ChallengeVMValidator(validate.Validator):
     def __call__(self, value):
-        if value == "" or value == "None":
+        if value == "" or value is None:
             return value
         result = subprocess.run(['VBoxManage', "list", "vms"], capture_output=True).stdout.decode()
 
@@ -55,7 +55,7 @@ class ChallengeVMValidator(validate.Validator):
 class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
         regex = "^(?:[a-zA-Z0-9_-]+)@(?:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$"
-        if value == "" or value == "None":
+        if value == "" or value is None:
             return value
         elif re.match(regex, value):
             ssh = paramiko.SSHClient()
