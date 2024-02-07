@@ -131,28 +131,31 @@ class BaseChallenge(object):
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
         for flag in flags:
             try:
-                if get_flag_class(flag.type).compare(flag, submission): # -------------------------- vmRestart -> hier findet vergleich mit DB statt
-                    schema = FlagSchema()
-                    import random
-                    chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-                             'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-                    new_token = random.choice(chars) + random.choice(chars) + random.choice(chars) + random.choice(
-                        chars) + '-' + random.choice(chars) + random.choice(chars) + random.choice(
-                        chars) + random.choice(chars)
+                if get_flag_class(flag.type).compare(flag, submission):
+                    if challenge.victims_connection == "" or challenge.victims_connection == "None":
+                        return True, "Correct"
+                    else:
+                        schema = FlagSchema()
+                        import random
+                        chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                                 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                        new_token = random.choice(chars) + random.choice(chars) + random.choice(chars) + random.choice(
+                            chars) + '-' + random.choice(chars) + random.choice(chars) + random.choice(
+                            chars) + random.choice(chars)
 
-                    s = '{"content": "'+new_token+'", "data": "' + flag.data + '", "type": "' + flag.type + '", "id": "' + str(flag.id) + '"}'
-                    req = json.loads(s)
-                    response = schema.load(req, session=db.session, instance=flag, partial=True)
+                        s = '{"content": "'+new_token+'", "data": "' + flag.data + '", "type": "' + flag.type + '", "id": "' + str(flag.id) + '"}'
+                        req = json.loads(s)
+                        response = schema.load(req, session=db.session, instance=flag, partial=True)
 
-                    if response.errors:
-                        print('return {"success": False, "errors": response.errors}, 400')
+                        if response.errors:
+                            print('return {"success": False, "errors": response.errors}, 400')
 
-                    db.session.commit()
-                    #thread = threading.Thread(target=restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token), daemon=True)
-                    #thread.start()
-                    asyncio.run(async_restore_snapshot(challenge.vm_name, challenge.victims_connection, new_token))
+                        db.session.commit()
+                        #thread = threading.Thread(target=restore_snapshot(challenge.vm_name, challenge.connection_info, 'root', challenge.vm_password, challenge.vm_password_type, new_token), daemon=True)
+                        #thread.start()
+                        asyncio.run(async_restore_snapshot(challenge.vm_name, challenge.victims_connection, new_token))
 
-                    return True, "Correct"
+                        return True, "Correct"
             except FlagException as e:
                 return False, str(e)
         return False, "Incorrect"
