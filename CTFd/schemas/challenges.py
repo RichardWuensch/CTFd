@@ -28,7 +28,7 @@ class ChallengeRequirementsValidator(validate.Validator):
 
 class ChallengeVMValidator(validate.Validator):
     def __call__(self, value):
-        if value == "":
+        if value == "" or "None":
             return value
         result = subprocess.run(['VBoxManage', "list", "vms"], capture_output=True).stdout.decode()
 
@@ -39,7 +39,6 @@ class ChallengeVMValidator(validate.Validator):
                                     capture_output=True).stdout.decode().splitlines()
             vm_info = {}
 
-            # Parsen der Ausgabe und Hinzufügen zum Dictionary
             for line in result:
                 parts = line.split("=")
                 if len(parts) > 1:
@@ -56,7 +55,7 @@ class ChallengeVMValidator(validate.Validator):
 class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
         regex = "^(?:[a-zA-Z0-9_-]+)@(?:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$"
-        if value == "":
+        if value == "" or "None":
             return value
         elif re.match(regex, value):
             ssh = paramiko.SSHClient()
