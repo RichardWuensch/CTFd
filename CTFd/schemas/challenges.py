@@ -28,6 +28,8 @@ class ChallengeRequirementsValidator(validate.Validator):
 
 class ChallengeVMValidator(validate.Validator):
     def __call__(self, value):
+        if value == "":
+            return value
         result = subprocess.run(['VBoxManage', "list", "vms"], capture_output=True).stdout.decode()
 
         vm_names = [line.split("\"")[1].strip('"') for line in result.splitlines()]
