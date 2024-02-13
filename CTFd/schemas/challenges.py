@@ -54,7 +54,7 @@ class ChallengeVMValidator(validate.Validator):
 
 class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
-        regex = "^(?:[a-zA-Z0-9_-]+)@(?:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$"
+        #regex = "^(?:[a-zA-Z0-9_-]+)@(?:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$"
         if value == "" or value is None:
             return value
         elif re.match(regex, value):
@@ -130,8 +130,8 @@ class ChallengeSchema(ma.ModelSchema):
         validate=[ChallengeVMValidator()],
     )
 
-    victims_connection = field_for(
+    '''victims_connection = field_for(
         Challenges,
         "victims_connection",
         validate=[ChallengeVictimsConnectionValidator()],
-    )
+    )'''
