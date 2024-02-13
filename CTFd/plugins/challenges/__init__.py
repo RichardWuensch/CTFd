@@ -152,10 +152,14 @@ class BaseChallenge(object):
 
                         db.session.commit()
                         print('##############################################################')
-                        subprocess.Popen(
-                            ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
-                             challenge.vm_name, challenge.victims_connection, new_token],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                        try:
+                            subprocess.Popen(
+                                ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
+                                 challenge.vm_name, challenge.victims_connection, new_token],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                        except Exception as e:
+                            # Fängt andere mögliche Fehler
+                            print(f"Ein unerwarteter Fehler ist aufgetreten: {e}")
                         print('##############################################################')
                         return True, "Correct"
             except FlagException as e:
