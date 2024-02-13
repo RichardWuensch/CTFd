@@ -17,7 +17,6 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.challenges.change_token import async_restore_snapshot
 from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.uploads import delete_file
