@@ -1,10 +1,7 @@
 import subprocess
-import threading
-import time
 
 from flask import Blueprint
 import json
-import asyncio
 
 from CTFd.models import (
     ChallengeFiles,
@@ -155,10 +152,9 @@ class BaseChallenge(object):
 
                         db.session.commit()
                         subprocess.Popen(
-                            ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/change_token.py',
-                             challenge.vm_name, challenge.victims_connection, new_token])#''',
-                            #stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)'''
-
+                            ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
+                             challenge.vm_name, challenge.victims_connection, new_token],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         return True, "Correct"
             except FlagException as e:
                 return False, str(e)
