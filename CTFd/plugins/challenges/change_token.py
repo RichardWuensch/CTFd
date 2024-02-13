@@ -2,7 +2,9 @@ import paramiko
 import subprocess
 
 
-async def async_ssh_connect(victims_connection, token):
+
+
+'''async def async_ssh_connect(victims_connection, token):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -23,24 +25,24 @@ async def async_ssh_connect(victims_connection, token):
 
 
 async def async_run_vm(vm_name):
-    subprocess.run(['VBoxManage', 'startvm', vm_name, '--type=headless'])
+    subprocess.run([r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe', 'startvm', vm_name, '--type=headless'])
 
 
 async def async_stop_vm(vm_name):
-    subprocess.run(['VBoxManage', 'controlvm', vm_name, 'poweroff'])
+    subprocess.run([r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe', 'controlvm', vm_name, 'poweroff'])
 
 
 async def async_restore_snapshot(vm_name, victims_connection, token):
     await async_stop_vm(vm_name)
     # await asyncio.sleep(5)
-    subprocess.run(['VBoxManage', 'snapshot', vm_name, 'restorecurrent'])
+    subprocess.run([r'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe', 'snapshot', vm_name, 'restorecurrent'])
     # await asyncio.sleep(10)
     await async_run_vm(vm_name)
     # await asyncio.sleep(30)
     if victims_connection != "":
         await async_ssh_connect(victims_connection, token)
-
-
+'''
+#-----------------------------------------------------------------------------------------------------
 '''
 def ssh_connect(vm_ip, ssh_username, vm_password_type, ssh_password, token):
     ssh = paramiko.SSHClient()
