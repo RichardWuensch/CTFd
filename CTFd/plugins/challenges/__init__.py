@@ -151,10 +151,12 @@ class BaseChallenge(object):
                             print('return {"success": False, "errors": response.errors}, 400')
 
                         db.session.commit()
+                        print('##############################################################')
                         subprocess.Popen(
                             ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
                              challenge.vm_name, challenge.victims_connection, new_token],
                             stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                        print('##############################################################')
                         return True, "Correct"
             except FlagException as e:
                 return False, str(e)
