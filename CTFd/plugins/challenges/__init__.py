@@ -157,6 +157,7 @@ class BaseChallenge(object):
                                 ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
                                  challenge.vm_name, challenge.victims_connection, new_token],
                                 stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                            print('#########################test#####################################')
                         except Exception as e:
                             # Fängt andere mögliche Fehler
                             print(f"Ein unerwarteter Fehler ist aufgetreten: {e}")
