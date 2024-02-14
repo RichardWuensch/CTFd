@@ -151,27 +151,9 @@ class BaseChallenge(object):
                             print('return {"success": False, "errors": response.errors}, 400')
 
                         db.session.commit()
-                        print('##############################################################')
-                        try:
-                            process = subprocess.Popen(
-                                ['python3', 'CTFd/plugins/challenges/scripts_flag/changeFlag.py',
-                                 challenge.vm_name, challenge.victims_connection, new_token],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                            output, error = process.communicate()
-
-                            # Umwandeln der Byte-Strings in normale Strings (falls notwendig)
-                            output = output.decode('utf-8')
-                            error = error.decode('utf-8')
-
-                            # Ausgabe der Ergebnisse
-                            print("Output:", output)
-                            if error:
-                                print("Error:", error)
-                            print('#########################test#####################################')
-                        except Exception as e:
-                            # Fängt andere mögliche Fehler
-                            print(f"Ein unerwarteter Fehler ist aufgetreten: {e}")
-                        print('##############################################################')
+                        subprocess.Popen(['python3', 'CTFd/plugins/challenges/scripts_flag/changeFlag.py',
+                                          challenge.vm_name, challenge.victims_connection, new_token],
+                                         stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         return True, "Correct"
             except FlagException as e:
                 return False, str(e)

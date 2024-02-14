@@ -15,7 +15,6 @@ def restore_snapshot(vm_name, path_to_vdi, token):
 vm_name = None
 path_to_vdi = None
 token = None
-print("gecallt")
 if len(sys.argv) > 1:
     vm_name = sys.argv[1]
     if len(sys.argv) > 2:
@@ -23,5 +22,3 @@ if len(sys.argv) > 1:
         if len(sys.argv) > 3:
             token = sys.argv[3]
     restore_snapshot(vm_name, path_to_vdi, token)
-else:
-    print("Keine Argumente angegeben.")
