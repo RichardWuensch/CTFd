@@ -154,7 +154,7 @@ class BaseChallenge(object):
                         print('##############################################################')
                         try:
                             process = subprocess.Popen(
-                                ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
+                                ['python3', 'CTFd/plugins/challenges/scripts_flag/changeFlag.py',
                                  challenge.vm_name, challenge.victims_connection, new_token],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             output, error = process.communicate()
