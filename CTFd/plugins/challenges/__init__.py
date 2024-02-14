@@ -153,10 +153,20 @@ class BaseChallenge(object):
                         db.session.commit()
                         print('##############################################################')
                         try:
-                            subprocess.Popen(
+                            process = subprocess.Popen(
                                 ['python3', 'CTFd/plugins/challenges/scripts_flag/changeToken.py',
                                  challenge.vm_name, challenge.victims_connection, new_token],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            output, error = process.communicate()
+
+                            # Umwandeln der Byte-Strings in normale Strings (falls notwendig)
+                            output = output.decode('utf-8')
+                            error = error.decode('utf-8')
+
+                            # Ausgabe der Ergebnisse
+                            print("Output:", output)
+                            if error:
+                                print("Error:", error)
                             print('#########################test#####################################')
                         except Exception as e:
                             # Fängt andere mögliche Fehler
