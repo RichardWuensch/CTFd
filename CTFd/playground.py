@@ -32,6 +32,7 @@ async def run_playground(usable_vm):
     # clone vm
     # subprocess.run(['VBoxManage', 'clonevm', 'Hacker\'s Playground', '--name', cloned_vm_name, '--register'])
     subprocess.run(['VBoxManage', 'modifyvm', usable_vm, '--name', cloned_vm_name])
+    time.sleep(3)
     subprocess.run(['VBoxManage', 'startvm', cloned_vm_name, '--type=headless'])
     time.sleep(40)
     result = subprocess.run(
@@ -70,11 +71,14 @@ async def run_playground(usable_vm):
 @during_ctf_time_only
 @require_verified_emails
 def start_playground():
+    print("start_playground")
     all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     if len([element for element in vm_names if element.startswith(get_current_user().email)]) < 1:
         usable_vm = get_vm(all_vms)
+        print(usable_vm)
         if usable_vm is None:
+            print("Currently no Playground is available")
             return "Currently no Playground is available" # Todo frontend
         url = asyncio.run(run_playground(usable_vm))
         return url
