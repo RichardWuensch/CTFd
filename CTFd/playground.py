@@ -40,9 +40,6 @@ def get_password(cloned_vm_name):
 
 async def run_playground(usable_vm):
     cloned_vm_name = get_current_user().email + "_" + str(time.time_ns())
-
-    # clone vm
-    # subprocess.run(['VBoxManage', 'clonevm', 'Hacker\'s Playground', '--name', cloned_vm_name, '--register'])
     subprocess.run(['VBoxManage', 'modifyvm', usable_vm, '--name', cloned_vm_name])
     subprocess.run(['VBoxManage', 'startvm', cloned_vm_name, '--type=headless'])
     time.sleep(40)
@@ -55,6 +52,8 @@ async def run_playground(usable_vm):
         time.sleep(3)
 
     ipaddress = result
+    print(ipaddress)
+    print(get_password(cloned_vm_name))
 
     log(
         "playgrounds",
