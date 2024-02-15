@@ -1,6 +1,6 @@
 import asyncio
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_complete_profile,
@@ -46,7 +46,7 @@ async def run_playground(usable_vm):
     result = get_ip(cloned_vm_name)
 
     counter = 0
-    while result.stdout.decode() == '' and counter <= 20:  # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
+    while result == '' and counter <= 20:
         counter = counter + 1
         result = get_ip(cloned_vm_name)
         time.sleep(3)
@@ -97,9 +97,7 @@ def stop_playground():
         subprocess.run(['VBoxManage', 'controlvm', user, 'poweroff'])
         time.sleep(5)
         try:
-            # delete the vm and his disk
             subprocess.run(['VBoxManage', 'unregistervm', user, '--delete'], check=True)
-
             return "Successful"
         except subprocess.CalledProcessError as e:
             return "Error"
