@@ -78,12 +78,14 @@
     {% block victims_connection %}
 	<div class="form-group">
 		<label>
-			Victims Connection<br>
+			Path to the .vdi of the VM<br>
 			<small class="form-text text-muted">
-				Use this to specify the SSH connection parameters for the victims machine in the form username@ipaddress (eg root@10.0.0.1). If there is no SSH connection possible or the challenge has no vm leave the field empty.
-			</small>
+				Only enter a path if you want a new flag inside the vm after somebody solved a challenge.
+                Use this to specify the path to the .vdi of the victims machine (eg /home/wuensch/VirtualBox VMs/example).
+                Please make sure that there is the needed newToken.sh inside this folder.
+            </small>
 		</label>
-		<input type="text" class="form-control chal-connection-info" name="victims_connection" placeholder="Enter SSH connection parameter">
+		<input type="text" class="form-control chal-connection-info" name="victims_connection" placeholder="Enter .vdi path">
 	</div>
 	{% endblock %}
 

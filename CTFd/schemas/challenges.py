@@ -1,4 +1,4 @@
-import re
+import os.path
 import subprocess
 
 import paramiko
@@ -54,26 +54,12 @@ class ChallengeVMValidator(validate.Validator):
 
 class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
-        #regex = "^(?:[a-zA-Z0-9_-]+)@(?:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})$"
         if value == "" or value is None:
             return value
-        elif re.match(regex, value):
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-            try:
-                private_key_path = 'C:\\Users\\richa\\Desktop\\FHWS\\7.Semester\\key.pem'
-                private_key = paramiko.RSAKey.from_private_key_file(private_key_path)
-                connection_parameter = value.split("@")
-                ssh.connect(hostname=connection_parameter[1], username=connection_parameter[0], pkey=private_key)
-                ssh.close()
-                return value
-            except paramiko.AuthenticationException:
-                raise ValidationError("Authentication of SSH failed")
-            except paramiko.SSHException as ssh_err:
-                raise ValidationError(f"Failed SSH-Connection: {ssh_err}")
+        elif os.path.exists(value+'/newToken.sh'):
+            return value
         else:
-            raise ValidationError("Victims Connection is not in the right format")
+            raise ValidationError("newToken.sh is not available in the given folder")
 
 class ChallengeSchema(ma.ModelSchema):
     class Meta:
@@ -130,8 +116,8 @@ class ChallengeSchema(ma.ModelSchema):
         validate=[ChallengeVMValidator()],
     )
 
-    '''victims_connection = field_for(
+    victims_connection = field_for(
         Challenges,
         "victims_connection",
         validate=[ChallengeVictimsConnectionValidator()],
-    )'''
+    )
