@@ -21,7 +21,7 @@ def get_vm(all_vms):
         vm_name = line.split('"')[1]
         vm_info = subprocess.run(['VBoxManage', 'showvminfo', vm_name, '--machinereadable'], capture_output=True,
                                  text=True).stdout
-        if f'groups="/playground"' in vm_info and 'VMState="running"' in vm_info:
+        if f'groups="/playground"' in vm_info and 'VMState="poweroff"' in vm_info:
             return vm_name
     return None
 
@@ -32,7 +32,6 @@ async def run_playground(usable_vm):
     # clone vm
     # subprocess.run(['VBoxManage', 'clonevm', 'Hacker\'s Playground', '--name', cloned_vm_name, '--register'])
     subprocess.run(['VBoxManage', 'modifyvm', usable_vm, '--name', cloned_vm_name])
-    time.sleep(3)
     subprocess.run(['VBoxManage', 'startvm', cloned_vm_name, '--type=headless'])
     time.sleep(40)
     result = subprocess.run(
