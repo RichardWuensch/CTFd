@@ -25,6 +25,18 @@ def get_vm(all_vms):
             return vm_name
     return None
 
+def get_ip(cloned_vm_name):
+    return subprocess.run(
+        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
+         '--', '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
+        capture_output=True).stdout.decode().replace("\n", "")
+
+def get_password(cloned_vm_name):
+    return subprocess.run(
+        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'root', '--password', 'toor',
+         '--', '/bin/bash', '-c', 'cat /etc/guacamole/passwd.txt'],
+        capture_output=True).stdout.decode()
+
 
 async def run_playground(usable_vm):
     cloned_vm_name = get_current_user().email + "_" + str(time.time_ns())
@@ -34,26 +46,15 @@ async def run_playground(usable_vm):
     subprocess.run(['VBoxManage', 'modifyvm', usable_vm, '--name', cloned_vm_name])
     subprocess.run(['VBoxManage', 'startvm', cloned_vm_name, '--type=headless'])
     time.sleep(40)
-    result = subprocess.run(
-        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali', '--',
-         '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
-        capture_output=True)
+    result = get_ip(cloned_vm_name)
 
     counter = 0
     while result.stdout.decode() == '' and counter <= 20:  # wird max count erreicht ist etwas schiefgelaufen -> Maschine muss dann gelöscht werden und vorgang neu gestartet
         counter = counter + 1
-        result = subprocess.run(
-            ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
-             '--', '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
-            capture_output=True)
+        result = get_ip(cloned_vm_name)
         time.sleep(3)
 
-    ipaddress = result.stdout.decode().replace("\n", "")
-
-    password = subprocess.run(
-        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'root', '--password', 'toor',
-         '--', '/bin/bash', '-c', 'cat /etc/guacamole/passwd.txt'],
-        capture_output=True)
+    ipaddress = result
 
     log(
         "playgrounds",
@@ -62,7 +63,7 @@ async def run_playground(usable_vm):
         vm=cloned_vm_name,
         ipaddress=ipaddress
     )
-    return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name, 'password': password.stdout.decode()}
+    return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name, 'password': get_password(cloned_vm_name)}
 
 
 @playground.route('/playground')
@@ -70,19 +71,18 @@ async def run_playground(usable_vm):
 @during_ctf_time_only
 @require_verified_emails
 def start_playground():
-    print("start_playground")
-    all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
+    all_vms = subprocess.run(['C:/Program Files/Oracle/VirtualBox/VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     if len([element for element in vm_names if element.startswith(get_current_user().email)]) < 1:
         usable_vm = get_vm(all_vms)
         print(usable_vm)
         if usable_vm is None:
-            print("Currently no Playground is available")
             return "Currently no Playground is available" # Todo frontend
         url = asyncio.run(run_playground(usable_vm))
         return url
     else:
-        return "You cannot create a second machine"
+        existing_vm_name = [element for element in vm_names if element.startswith(get_current_user().email)][0]
+        return {'url': f'https://hlab.fiw.thws.de/{get_ip(existing_vm_name)}/', 'vm': existing_vm_name, 'password': get_password(existing_vm_name)}
 
 
 @playground.route('/stop_playground')
