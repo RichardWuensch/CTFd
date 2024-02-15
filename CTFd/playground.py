@@ -16,7 +16,6 @@ playground = Blueprint("playground", __name__)
 
 
 def get_vm(all_vms):
-    # output = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True, text=True).stdout
     for line in all_vms.strip().split('\n'):
         vm_name = line.split('"')[1]
         vm_info = subprocess.run(['VBoxManage', 'showvminfo', vm_name, '--machinereadable'], capture_output=True,
@@ -98,6 +97,8 @@ def stop_playground():
         time.sleep(5)
         try:
             subprocess.run(['VBoxManage', 'unregistervm', user, '--delete'], check=True)
+            subprocess.Popen(['python3', 'CTFd/utils/playground/prepare_playgrounds.py'],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
             return "Successful"
         except subprocess.CalledProcessError as e:
             return "Error"
