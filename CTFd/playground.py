@@ -71,7 +71,7 @@ async def run_playground(usable_vm):
 @during_ctf_time_only
 @require_verified_emails
 def start_playground():
-    all_vms = subprocess.run(['C:/Program Files/Oracle/VirtualBox/VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
+    all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     if len([element for element in vm_names if element.startswith(get_current_user().email)]) < 1:
         usable_vm = get_vm(all_vms)
