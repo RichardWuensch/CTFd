@@ -22,14 +22,15 @@ def start_and_stop_vm(vm_name):
 def main():
     group_name = "playground"
     base_vm_name = "Hacker's Playground"
-    target_count = 10 #max number of existing Playground machines, if increase this number, please stop the corrospondig cronjob and start the script seperate, afterwards enable the corrosponig cronjob again
+    target_count = 10 #max number of existing Playground machines, if increase this number, please stop the corrospondig cronjob and start the script seper>
     vms_in_group = get_vms_in_group(group_name)
-    clone_count = len(vms_in_group)
-    for i in range(clone_count, target_count):
+    while len(vms_in_group) <= target_count:
         clone_name = f"{base_vm_name}_Clone_{str(time.time_ns())}"
         subprocess.run(['VBoxManage', 'clonevm', base_vm_name, '--name', clone_name, '--register'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-        subprocess.run(['VBoxManage', 'modifyvm', clone_name, '--groups', f"/{group_name}"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) # move clone in group playground
+        subprocess.run(['VBoxManage', 'modifyvm', clone_name, '--groups', f"/{group_name}"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) # move cl>
         start_and_stop_vm(clone_name)
+        vms_in_group = get_vms_in_group(group_name)
+
 
 if __name__ == "__main__":
     main()
