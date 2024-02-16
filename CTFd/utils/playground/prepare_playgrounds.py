@@ -1,5 +1,6 @@
 import subprocess
 import time
+import os
 
 
 def get_vms_in_group(group_name):
@@ -33,4 +34,9 @@ def main():
 
 
 if __name__ == "__main__":
+    for dir in os.listdir('/home/wuensch/VirtualBox VMs'):
+        complete_path = os.path.join('/home/wuensch/VirtualBox VMs', dir)
+        if os.path.isdir(complete_path):
+            if not os.listdir(complete_path):
+                os.rmdir(complete_path)
     main()
