@@ -24,11 +24,13 @@ def get_vm(all_vms):
             return vm_name
     return None
 
+
 def get_ip(cloned_vm_name):
     return subprocess.run(
         ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
          '--', '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
         capture_output=True).stdout.decode().replace("\n", "")
+
 
 def get_password(cloned_vm_name):
     return subprocess.run(
@@ -61,19 +63,8 @@ async def run_playground(usable_vm):
         vm=cloned_vm_name,
         ipaddress=ipaddress
     )
-    return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name, 'password': get_password(cloned_vm_name)}
-
-@playground.route('/playground/credentials')
-@require_complete_profile
-@during_ctf_time_only
-def stop_playground():
-    all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
-    vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
-    vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
-    if len(vm_name) > 0:
-        return get_password(vm_name[0])
-    else:
-        return None
+    return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name,
+            'password': get_password(cloned_vm_name)}
 
 
 @playground.route('/playground/start')
@@ -86,12 +77,13 @@ def start_playground():
         usable_vm = get_vm(all_vms)
         print(usable_vm)
         if usable_vm is None:
-            return "Currently no Playground is available" # Todo frontend
+            return "Currently no Playground is available"  # Todo frontend
         url = asyncio.run(run_playground(usable_vm))
         return url
     else:
         existing_vm_name = [element for element in vm_names if element.startswith(get_current_user().email)][0]
-        return {'url': f'https://hlab.fiw.thws.de/{get_ip(existing_vm_name)}/', 'vm': existing_vm_name, 'password': get_password(existing_vm_name)}
+        return {'url': f'https://hlab.fiw.thws.de/{get_ip(existing_vm_name)}/', 'vm': existing_vm_name,
+                'password': get_password(existing_vm_name)}
 
 
 @playground.route('/playground/stop')
@@ -113,3 +105,16 @@ def stop_playground():
             return "Error"
     else:
         return "No running playground"
+
+
+@playground.route('/playground/credentials')
+@require_complete_profile
+@during_ctf_time_only
+def stop_playground():
+    all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
+    vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
+    vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
+    if len(vm_name) > 0:
+        return get_password(vm_name[0])
+    else:
+        return None
