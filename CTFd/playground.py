@@ -107,7 +107,7 @@ def stop_playground():
         return "No running playground"
 
 
-@playground.route('/playground/credentials')
+'''@playground.route('/playground/credentials')
 @require_complete_profile
 @during_ctf_time_only
 def stop_playground():
@@ -118,3 +118,4 @@ def stop_playground():
         return {'password': get_password(vm_name[0])}
     else:
         return None
+'''
