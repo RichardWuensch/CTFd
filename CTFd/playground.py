@@ -63,11 +63,22 @@ async def run_playground(usable_vm):
     )
     return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name, 'password': get_password(cloned_vm_name)}
 
+@playground.route('/playground')
+@require_complete_profile
+@during_ctf_time_only
+def stop_playground():
+    all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
+    vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
+    vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
+    if len(vm_name) > 0:
+        return get_password(vm_name[0])
+    else:
+        return None
+
 
 @playground.route('/playground/start')
 @require_complete_profile
 @during_ctf_time_only
-@require_verified_emails
 def start_playground():
     all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
@@ -86,17 +97,15 @@ def start_playground():
 @playground.route('/playground/stop')
 @require_complete_profile
 @during_ctf_time_only
-@require_verified_emails
 def stop_playground():
     all_vms = subprocess.run(['VBoxManage', 'list', 'vms'], capture_output=True).stdout.decode()
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
     if len(vm_name) > 0:
-        user = vm_name[0]
-        subprocess.run(['VBoxManage', 'controlvm', user, 'poweroff'])
+        subprocess.run(['VBoxManage', 'controlvm', vm_name[0], 'poweroff'])
         time.sleep(5)
         try:
-            subprocess.run(['VBoxManage', 'unregistervm', user, '--delete'], check=True)
+            subprocess.run(['VBoxManage', 'unregistervm', vm_name[0], '--delete'], check=True)
             subprocess.Popen(['python3', 'CTFd/utils/playground/prepare_playgrounds.py'],
                              stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
             return "Successful"
