@@ -63,7 +63,7 @@ async def run_playground(usable_vm):
     )
     return {'url': f'https://hlab.fiw.thws.de/{ipaddress}/', 'vm': cloned_vm_name, 'password': get_password(cloned_vm_name)}
 
-@playground.route('/playground')
+@playground.route('/playground/test')
 @require_complete_profile
 @during_ctf_time_only
 def stop_playground():
