@@ -107,7 +107,7 @@ def stop_playground():
         return "No running playground"
 
 
-'''@playground.route('/playground/credentials')
+@playground.route('/playground/credentials')
 @require_complete_profile
 @during_ctf_time_only
 def stop_playground():
@@ -115,7 +115,6 @@ def stop_playground():
     vm_names = [line.split("\"")[1].strip('"') for line in all_vms.splitlines()]
     vm_name = [element for element in vm_names if element.startswith(get_current_user().email)]
     if len(vm_name) > 0:
-        return get_password(vm_name[0])
+        return {'password': get_password(vm_name[0])}
     else:
         return None
-'''
