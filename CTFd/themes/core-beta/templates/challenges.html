@@ -34,7 +34,7 @@
                         document.getElementById("startPlayground").disabled = true;
                         document.getElementById("loader").style.display = "inline-block";
 
-                        const response = await fetch('/playground');
+                        const response = await fetch('/playground/start');
                         const resp = await response.text();
                         if (resp === "You cannot create a second machine") {
                             document.getElementById("loader").style.display = "none";
@@ -57,7 +57,7 @@
                         document.getElementById("login").innerText = "";
                         document.getElementById("vm").innerText = "";
                         document.getElementById("startPlayground").disabled = false;
-                        fetch('/stop_playground');
+                        fetch('/playground/stop');
                     }
                     window.addEventListener("beforeunload", stopPlayground);
                 </script>
