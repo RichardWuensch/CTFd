@@ -1,0 +1,121 @@
+-------------------This Code can be added via "Admin Panel" -> "Pages" -> "new Page" with the endpoint /playground-----------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground Control</title>
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+      	.playground-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 10%;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .playground-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            min-width: 150px;
+            border-radius: 5px;
+        }
+
+        .info-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="playground-container">
+      <h3>Playground<h3>
+        <h5>You can use this browser-version of Kali Linux if you are unable to join the hackerlab network via <a href="/files/51e7778946d6b8fd0cf5baa66a7d4475/hackerlab.ovpn">VPN</a><h5>
+        <div class="button-container">
+            <button id="startPlayground" class="playground-button btn-primary" type="button" onclick="startPlayground()">Get Playground <span id="loader" class="loader"></span></button>
+            <button id="stopPlayground" class="playground-button btn-danger" type="button" onclick="stopPlayground()">Terminate Playground</button>
+        </div>
+        <div class="info-container">
+            <h5 id="uelogin"></h5>
+            <h6 id="login"></h6>
+            <h5 id="uevm"></h5>
+            <h6 id="vm"></h6>
+        </div>
+    </div>
+
+  <script>
+        getCredentials();
+        window.addEventListener("beforeunload", stopPlayground);
+        let vm_name='';
+        let password='';
+        async function startPlayground() {
+            if (password === ''){
+            	alert("It can take up to 1 minutes until your playground is ready for use. The Playground will open in a new tab, if your browser does not allow pop-up windows automatically, make sure you allow it when asked. If there is any issue, please click terminate and try again!");
+            }
+            document.getElementById("startPlayground").disabled = true;
+            document.getElementById("loader").style.display = "inline-block";
+
+            const response = await fetch("/playground/start");
+            const resp = await response.text();
+            if (resp === "Currently no Playground is available") {
+                document.getElementById("loader").style.display = "none";
+                alert("Sorry, unfortunately all playgrounds are currently in use, please try again later or connect to the VPN to be active in the hackerlab");
+            } else {
+                const json = JSON.parse(resp);
+                window.open(json.url);
+                document.getElementById("loader").style.display = "none";
+                vm_name = json.vm;
+                password = json.password;
+                document.getElementById("uelogin").innerText = "Login Credentials";
+                document.getElementById("uevm").innerText = "Root Credentials";
+                document.getElementById("login").innerText = "Username: kali - Password: " + password;
+                document.getElementById("vm").innerText = "Username: root - Password: toor";
+                document.getElementById("startPlayground").disabled = false;
+             }
+        }
+
+        function stopPlayground() {
+             document.getElementById("uelogin").innerText = "";
+             document.getElementById("uevm").innerText = "";
+             document.getElementById("login").innerText = "";
+             document.getElementById("vm").innerText = "";
+             document.getElementById("startPlayground").disabled = false;
+             fetch("/playground/stop");
+        }
+
+        async function getCredentials() {
+             const response = await fetch("/playground/credentials");
+             const resp = await response.text();
+             const json = JSON.parse(resp);
+             password = json.password;
+             document.getElementById("uelogin").innerText = "Login Credentials";
+             document.getElementById("uevm").innerText = "Root Credentials";
+             document.getElementById("login").innerText = "Username: kali - Password: " + password;
+             document.getElementById("vm").innerText = "Username: root - Password: toor";
+        }
+  </script>
+  </body>
+</html>
