@@ -57,7 +57,7 @@ challenges_namespace = Namespace(
 )
 
 ChallengeModel = sqlalchemy_to_pydantic(
-    Challenges, include={"solves": int, "solved_by_me": bool}
+    Challenges, include={"victims_connection": str, "vm_name": str, "solves": int, "solved_by_me": bool}
 )
 TransientChallengeModel = sqlalchemy_to_pydantic(Challenges, exclude=["id"])
 
