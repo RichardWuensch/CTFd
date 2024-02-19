@@ -56,7 +56,7 @@ class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
         if value == "" or value is None:
             return value
-        elif os.path.exists(value+'/newToken.sh'):
+        elif os.path.exists(value+'newToken.sh'):
             return value
         else:
             raise ValidationError("newToken.sh is not available in the given folder")
