@@ -57,7 +57,7 @@ challenges_namespace = Namespace(
 )
 
 ChallengeModel = sqlalchemy_to_pydantic(
-    Challenges, include={"victims_connection": str, "vm_name": str, "solves": int, "solved_by_me": bool}
+    Challenges, include={"solves": int, "solved_by_me": bool}
 )
 TransientChallengeModel = sqlalchemy_to_pydantic(Challenges, exclude=["id"])
 
@@ -216,8 +216,8 @@ class ChallengeList(Resource):
                     "tags": tag_schema.dump(challenge.tags).data,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
-                    "vm_name": challenge.vm_name,
-                    "victims_connection": challenge.victims_connection,
+                    #"vm_name": challenge.vm_name,
+                    #"victims_connection": challenge.victims_connection,
                 }
             )
 
