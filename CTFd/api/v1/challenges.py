@@ -112,8 +112,6 @@ class ChallengeList(Resource):
                             "category": "category",
                             "type": "type",
                             "state": "state",
-                            "vm_name": "vm_name",
-                            "victims_connection": "victims_connection",
                         },
                     ),
                     None,
@@ -218,8 +216,8 @@ class ChallengeList(Resource):
                     "tags": tag_schema.dump(challenge.tags).data,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
-                    "vm_name": challenge.vm_name,
-                    "victims_connection": challenge.victims_connection,
+                    #"vm_name": challenge.vm_name,
+                    #"victims_connection": challenge.victims_connection,
                 }
             )
 
