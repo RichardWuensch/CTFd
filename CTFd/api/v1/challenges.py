@@ -112,6 +112,8 @@ class ChallengeList(Resource):
                             "category": "category",
                             "type": "type",
                             "state": "state",
+                            "vm_name": "vm_name",
+                            "victims_connection": "victims_connection",
                         },
                     ),
                     None,
