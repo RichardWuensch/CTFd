@@ -160,7 +160,6 @@ class ChallengeList(Resource):
             solve_count_dfl = None
 
         chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
-
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
         response = []
@@ -216,8 +215,8 @@ class ChallengeList(Resource):
                     "tags": tag_schema.dump(challenge.tags).data,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
-                    #"vm_name": challenge.vm_name,
-                    #"victims_connection": challenge.victims_connection,
+                    "vm_name": challenge.vm_name,
+                    "victims_connection": challenge.victims_connection,
                 }
             )
 
