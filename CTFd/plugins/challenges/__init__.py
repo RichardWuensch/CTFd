@@ -14,6 +14,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins.challenges.scripts_flag.generate_new_flag import generate_random_flag
 from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.uploads import delete_file
@@ -133,16 +134,10 @@ class BaseChallenge(object):
                         return True, "Correct"
                     else:
                         schema = FlagSchema()
-                        import random
-                        chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
-                                 'R',
-                                 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-                                 '9']
-                        new_token = random.choice(chars) + random.choice(chars) + random.choice(chars) + random.choice(
-                            chars) + '-' + random.choice(chars) + random.choice(chars) + random.choice(
-                            chars) + random.choice(chars)
 
-                        s = '{"content": "' + new_token + '", "data": "' + flag.data + '", "type": "' + flag.type + '", "id": "' + str(
+                        new_flag = generate_random_flag()
+
+                        s = '{"content": "' + new_flag + '", "data": "' + flag.data + '", "type": "' + flag.type + '", "id": "' + str(
                             flag.id) + '"}'
                         req = json.loads(s)
                         response = schema.load(req, session=db.session, instance=flag, partial=True)

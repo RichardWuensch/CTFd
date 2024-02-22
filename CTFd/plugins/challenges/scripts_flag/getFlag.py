@@ -3,5 +3,10 @@
 import subprocess
 import sys
 
+
+def getFlag(path_to_vdi):
+    subprocess.run([path_to_vdi + 'getToken.sh'])
+
+
 if len(sys.argv) > 1:
-    subprocess.run([sys.argv[1]+'getToken.sh'])
+    getFlag(sys.argv[1])
