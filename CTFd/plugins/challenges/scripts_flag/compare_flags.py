@@ -5,25 +5,27 @@ import requests
 
 def set_new_flag(flag, new_flag):
     flag['content'] = new_flag
-    requests.patch(url + 'flags/' + str(flag.get('id')), headers=headers, json=flag)
+    print(flag)
+    requests.patch(url=url + 'flags/' + str(flag.get('id')), headers=headers, json=flag)
 
 
 def compare_token(victims_connection, vm_name, flag):
+    flag_from_db = flag['content']
     flag_from_vm = subprocess.run(
         ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/getFlag.py', victims_connection],
-        capture_output=True, text=True).stdout
-    if flag_from_vm == flag:
+        capture_output=True, text=True).stdout.strip()
+    if flag_from_vm == flag_from_db:
         return
     else:
         new_flag = subprocess.run(
-            ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/generate_new_flag.py'])
-        set_new_flag(flag, new_flag, headers)
+            ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/generate_new_flag.py']).stdout.strip()
+        set_new_flag(flag, new_flag)
         subprocess.run(
             ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/changeFlag.py', vm_name, victims_connection,
              new_flag])
 
 
-if len(sys.argv) == 1:
+if len(sys.argv) == 2:
     url = 'https://hlab.fiw.thws.de/api/v1/'
     headers = {
         'Authorization': 'Token ' + sys.argv[1],
