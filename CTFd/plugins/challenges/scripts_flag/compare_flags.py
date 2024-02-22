@@ -1,14 +1,6 @@
+import subprocess
+import sys
 import requests
-
-from CTFd.plugins.challenges.scripts_flag.changeFlag import restore_snapshot
-from CTFd.plugins.challenges.scripts_flag.generate_new_flag import generate_random_flag
-from CTFd.plugins.challenges.scripts_flag.getFlag import getFlag
-
-url = 'https://hlab.fiw.thws.de/api/v1/'
-headers = {
-    'Authorization': 'Token ctfd_43675bacbbd5877904e4f54c83c6d2f571d9394030cf031acb5827534f8bccc4', # Prod
-    'Content-Type': 'application/json'
-}
 
 
 def set_new_flag(flag, new_flag):
@@ -17,24 +9,36 @@ def set_new_flag(flag, new_flag):
 
 
 def compare_token(victims_connection, vm_name, flag):
-    flag_from_vm = getFlag(victims_connection)  # subprocess.run(['python3', '/var/www/', victims_connection], capture_output=True, text=True).stdout
+    flag_from_vm = subprocess.run(
+        ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/getFlag.py', victims_connection],
+        capture_output=True, text=True).stdout
     if flag_from_vm == flag:
         return
     else:
-        new_flag = generate_random_flag()
-        set_new_flag(flag, new_flag)
-        restore_snapshot(vm_name, victims_connection, new_flag)
+        new_flag = subprocess.run(
+            ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/generate_new_flag.py'])
+        set_new_flag(flag, new_flag, headers)
+        subprocess.run(
+            ['python3', '/var/www/CTFd/CTFd/plugins/challenges/scripts_flag/changeFlag.py', vm_name, victims_connection,
+             new_flag])
 
 
-response = requests.get(url + 'challenges', headers=headers)
+if len(sys.argv) == 1:
+    url = 'https://hlab.fiw.thws.de/api/v1/'
+    headers = {
+        'Authorization': 'Token ' + sys.argv[1],
+        'Content-Type': 'application/json'
+    }
+    response = requests.get(url + 'challenges', headers=headers)
 
-if response.status_code == 200:
-    challenges = response.json()['data']
-    mapped_dict = dict()
-    for c in challenges:
-        if c.get('victims_connection') == "" or c.get('victims_connection') is None:
-            continue
-        else:
-            response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
-            flag = response.json()['data'][0]
-            compare_token(c.get('victims_connection'), c.get('vm_name'), flag)
+    if response.status_code == 200:
+        challenges = response.json()['data']
+        for c in challenges:
+            if c.get('victims_connection') == "" or c.get('victims_connection') is None:
+                continue
+            else:
+                response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
+                flag = response.json()['data'][0]
+                compare_token(c.get('victims_connection'), c.get('vm_name'), flag)
+else:
+    pass
