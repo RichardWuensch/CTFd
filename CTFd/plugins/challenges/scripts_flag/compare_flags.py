@@ -4,11 +4,9 @@ from CTFd.plugins.challenges.scripts_flag.changeFlag import restore_snapshot
 from CTFd.plugins.challenges.scripts_flag.generate_new_flag import generate_random_flag
 from CTFd.plugins.challenges.scripts_flag.getFlag import getFlag
 
-# url = 'https://hlab.fiw.thws.de/api/v1/'
-url = 'http://127.0.0.1:4000/api/v1/'
+url = 'https://hlab.fiw.thws.de/api/v1/'
 headers = {
-    # 'Authorization': 'Token ctfd_43675bacbbd5877904e4f54c83c6d2f571d9394030cf031acb5827534f8bccc4', # Prod
-    'Authorization': 'Token ctfd_981c79c17cdf4350118f6a6804f8747da88041b05ac4a1689b0be8b38ead97ae',  # Test
+    'Authorization': 'Token ctfd_43675bacbbd5877904e4f54c83c6d2f571d9394030cf031acb5827534f8bccc4', # Prod
     'Content-Type': 'application/json'
 }
 
@@ -19,8 +17,7 @@ def set_new_flag(flag, new_flag):
 
 
 def compare_token(victims_connection, vm_name, flag):
-    flag_from_vm = getFlag(
-        victims_connection)  # subprocess.run(['python3', '/var/www/', victims_connection], capture_output=True, text=True).stdout
+    flag_from_vm = getFlag(victims_connection)  # subprocess.run(['python3', '/var/www/', victims_connection], capture_output=True, text=True).stdout
     if flag_from_vm == flag:
         return
     else:
