@@ -47,3 +47,11 @@ def validate_language(language):
         return
     if LANGUAGE_NAMES.get(language) is None:
         raise ValidationError("Invalid Language")
+
+
+def validate_password(password):
+    has_digit = re.search(r"\d", password) is not None
+    has_special_char = re.search(r"\W", password) is not None
+    has_uppercase = re.search(r"[A-Z]", password) is not None
+    has_lowercase = re.search(r"[a-z]", password) is not None
+    return all([has_digit, has_special_char, has_uppercase, has_lowercase])

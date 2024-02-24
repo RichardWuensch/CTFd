@@ -218,8 +218,9 @@ def register():
             .filter_by(email=email_address)
             .first()
         )
-        pass_short = len(password) < 8
+        pass_short = len(password) < 10
         pass_long = len(password) > 128
+        valid_password = validators.validate_password(password)
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
@@ -279,7 +280,9 @@ def register():
         if password != password_repeat:
             errors.append("The passwords are not the same")
         if pass_short:
-            errors.append("Pick a password with at least 8 character")
+            errors.append("Pick a password with at least 10 character")
+        if not valid_password:
+            errors.append("Please enter a password with at least one lower and upper case letter, one number and one special character")
         if pass_long:
             errors.append("Pick a shorter password")
         if name_len:

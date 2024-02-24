@@ -5,7 +5,7 @@ from sqlalchemy.orm import load_only
 
 from CTFd.models import UserFieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import UserFieldEntriesSchema
-from CTFd.utils import get_config, string_types
+from CTFd.utils import get_config, string_types, validators
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
 from CTFd.utils.user import get_current_user, is_admin
@@ -183,9 +183,17 @@ class UserSchema(ma.ModelSchema):
                     plaintext=confirm, ciphertext=target_user.password
                 )
                 if test is True:
+                    if len(password) < 10:
+                        raise ValidationError(
+                            "Pick a new password with at least 10 character", field_names=["confirm"]
+                        )
+                    if not validators.validate_password(password):
+                        raise ValidationError(
+                            "Please enter a password with at least one lower and upper case letter, one number and one special character", field_names=["confirm"]
+                        )
                     if password != password_repeat:
                         raise ValidationError(
-                            "Your new passwords are not the same", field_names=["confirm"]
+                            "Please repeat the password correctly", field_names=["confirm"]
                         )
                     return data
                 else:
