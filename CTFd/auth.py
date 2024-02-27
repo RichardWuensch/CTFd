@@ -7,7 +7,7 @@ from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 
 from CTFd.cache import clear_team_session, clear_user_session
-from CTFd.models import Teams, UserFieldEntries, UserFields, Users, db
+from CTFd.models import Brackets, Teams, UserFieldEntries, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -208,6 +208,7 @@ def register():
         country = request.form.get("country")
         registration_code = str(request.form.get("registration_code", ""))
         hidden = request.form.get("hidden")
+        bracket_id = request.form.get("bracket_id", None)
 
         name_len = len(name) == 0
         names = (
@@ -267,6 +268,16 @@ def register():
         else:
             valid_affiliation = True
 
+        if bracket_id:
+            valid_bracket = bool(
+                Brackets.query.filter_by(id=bracket_id, type="users").first()
+            )
+        else:
+            if Brackets.query.filter_by(type="users").count():
+                valid_bracket = False
+            else:
+                valid_bracket = True
+
         if not valid_email:
             errors.append("Please enter a valid email address")
         if email.check_email_is_whitelisted(email_address) is False:
@@ -293,6 +304,8 @@ def register():
             errors.append("Invalid country")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
+        if valid_bracket is False:
+            errors.append("Please provide a valid bracket")
 
         if len(errors) > 0:
             return render_template(
@@ -304,7 +317,12 @@ def register():
             )
         else:
             with app.app_context():
-                user = Users(name=name, email=email_address, password=password)
+                user = Users(
+                    name=name,
+                    email=email_address,
+                    password=password,
+                    bracket_id=bracket_id,
+                )
 
                 if hidden == 'y':
                     user.hidden = True
