@@ -8,4 +8,4 @@ def generate_random_flag(length=10):
     return 'THWS{' + random_string + '}'
 
 
-generate_random_flag()
+print(generate_random_flag())
