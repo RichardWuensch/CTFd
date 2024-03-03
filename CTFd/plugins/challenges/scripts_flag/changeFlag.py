@@ -6,7 +6,7 @@ def restore_snapshot(vm_name, path_to_vdi, flag):
     subprocess.run(['VBoxManage', 'controlvm', vm_name, 'poweroff'])  # shutdown
     subprocess.run(['VBoxManage', 'snapshot', vm_name, 'restorecurrent'])  # reset on last snapshot
     if path_to_vdi != "" and path_to_vdi is not None:
-        subprocess.run([path_to_vdi + 'newToken.sh', flag])  # call the script for the vm to set a new token
+        subprocess.run([path_to_vdi + 'newFlag.sh', flag])  # call the script for the vm to set a new token
     subprocess.run(['VBoxManage', 'startvm', vm_name, '--type=headless'])  # start the vm
 
 
