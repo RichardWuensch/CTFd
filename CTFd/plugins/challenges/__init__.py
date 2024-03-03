@@ -147,7 +147,7 @@ class BaseChallenge(object):
 
                         db.session.commit()
                         subprocess.Popen(['python3', 'CTFd/plugins/challenges/scripts_flag/changeFlag.py',
-                                          challenge.vm_name, challenge.victims_connection, new_token],
+                                          challenge.vm_name, challenge.victims_connection, new_flag],
                                          stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         return True, "Correct"
             except FlagException as e:
