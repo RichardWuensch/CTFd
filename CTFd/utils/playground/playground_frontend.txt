@@ -1,4 +1,3 @@
--------------------This Code can be added via "Admin Panel" -> "Pages" -> "new Page" with the endpoint /playground-----------------
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,6 +162,7 @@
                   document.getElementById("loader").style.display = "none";
                   document.getElementById("uelogin").innerText = "Login Credentials";
                   document.getElementById("login").innerText = "Username: kali - Password: " + password;
+                  document.getElementById("info").innerText = "";
                   document.getElementById("startPlayground").disabled = false;
                 }
              }
@@ -171,6 +171,7 @@
         function stopPlayground() {
              document.getElementById("uelogin").innerText = "";
              document.getElementById("login").innerText = "";
+             document.getElementById("info").innerText = "";
              document.getElementById("startPlayground").disabled = false;
              fetch("/playground/stop");
         }
