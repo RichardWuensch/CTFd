@@ -6,68 +6,6 @@
       <h1>
         {% trans %}Challenges{% endtrans %}
       </h1>
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button id="startPlayground" class="playground-button btn-primary float-right"
-                        type="submit" onclick="startPlayground()">Start Playground <span id="loader" class="loader"></span></button>
-                <button id="stopPlayground" class="playground-button btn-danger float-right"
-                        type="submit" onclick="stopPlayground()">Terminate Playground</button>
-
-                <style>
-                    .loader {
-                      border: 4px solid #f3f3f3;
-                      border-top: 4px solid #3498db;
-                      border-radius: 50%;
-                      width: 20px;
-                      height: 20px;
-                      animation: spin 1s linear infinite;
-                      display: none;
-                    }
-                    @keyframes spin {
-                      0% { transform: rotate(0deg); }
-                      100% { transform: rotate(360deg); }
-                    }
-                </style>
-                <script>
-                    let vm_name='';
-                    async function startPlayground() {
-                        alert("It can take up to 2 minutes until your playground is ready for use. The Playground will open in a new tab, if your browser does not allow pop-up windows automatically, make sure you allow it when asked. If there is any issue, please click terminate and try again!");
-                        document.getElementById("startPlayground").disabled = true;
-                        document.getElementById("loader").style.display = "inline-block";
-
-                        const response = await fetch('/playground/start');
-                        const resp = await response.text();
-                        if (resp === "You cannot create a second machine") {
-                            document.getElementById("loader").style.display = "none";
-                            alert("You cannot create a second machine");
-                        } else {
-                            const json = JSON.parse(resp);
-                            window.open(json.url);
-                            document.getElementById("loader").style.display = "none";
-                            vm_name = json.vm;
-                            document.getElementById("uelogin").innerText = "Login Credentials";
-                            document.getElementById("uevm").innerText = "Root Credentials";
-                            document.getElementById("login").innerText = "Username: kali - Password: " + json.password;
-                            document.getElementById("vm").innerText = "Username: root - Password: toor";
-                        }
-                    }
-
-                    function stopPlayground() {
-                        document.getElementById("uelogin").innerText = "";
-                        document.getElementById("uevm").innerText = "";
-                        document.getElementById("login").innerText = "";
-                        document.getElementById("vm").innerText = "";
-                        document.getElementById("startPlayground").disabled = false;
-                        fetch('/playground/stop');
-                    }
-                    window.addEventListener("beforeunload", stopPlayground);
-                </script>
-              </div>
-    <div>
-                    <h5 id="uelogin" class="right-align"></h5>
-                    <h6 id="login"class="right-align"></h6>
-                    <h5 id="uevm" class="right-align"></h5>
-                    <h6 id="vm" class="right-align"></h6>
-                </div>
     </div>
   </div>
 
