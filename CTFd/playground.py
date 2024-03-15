@@ -27,7 +27,7 @@ def get_vm(all_vms):
 
 def get_ip(cloned_vm_name):
     return subprocess.run(
-        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'kali', '--password', 'kali',
+        ['VBoxManage', 'guestcontrol', cloned_vm_name, 'run', '--username', 'root', '--password', 'toor',
          '--', '/bin/bash', '-c', 'ip a | awk \'/inet / && $2 !~ /^127\./ {gsub(/\/.*/, "", $2); print $2}\''],
         capture_output=True).stdout.decode().replace("\n", "")
 
