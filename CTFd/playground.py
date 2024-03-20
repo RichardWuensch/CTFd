@@ -47,7 +47,7 @@ async def run_playground(usable_vm):
     result = get_ip(cloned_vm_name)
 
     counter = 0
-    while result == '' and counter <= 20:
+    while result == '' and counter <= 35:
         counter = counter + 1
         result = get_ip(cloned_vm_name)
         time.sleep(3)
