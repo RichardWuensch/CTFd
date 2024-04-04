@@ -53,8 +53,6 @@ async def run_playground(usable_vm):
         time.sleep(3)
 
     ipaddress = result
-    print(ipaddress)
-    print(get_password(cloned_vm_name))
 
     log(
         "playgrounds",
@@ -77,7 +75,7 @@ def start_playground():
         usable_vm = get_vm(all_vms)
         print(usable_vm)
         if usable_vm is None:
-            return "Currently no Playground is available"  # Todo frontend
+            return "Currently no Playground is available"
         url = asyncio.run(run_playground(usable_vm))
         return url
     else:

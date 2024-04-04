@@ -312,7 +312,7 @@ def create_app(config="CTFd.config.Config"):
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)
         app.register_blueprint(api)
-        app.register_blueprint(events)
+        app.register_blueprint(api)
         app.register_blueprint(playground)
         app.register_blueprint(social)
 

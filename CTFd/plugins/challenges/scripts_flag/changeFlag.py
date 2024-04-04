@@ -12,11 +12,11 @@ def restore_snapshot(vm_name, path_to_vdi, flag):
 
 vm_name = None
 path_to_vdi = None
-token = None
+flag = None
 if len(sys.argv) > 1:
     vm_name = sys.argv[1]
     if len(sys.argv) > 2:
         path_to_vdi = sys.argv[2]
         if len(sys.argv) > 3:
-            token = sys.argv[3]
-    restore_snapshot(vm_name, path_to_vdi, token)
+            flag = sys.argv[3]
+    restore_snapshot(vm_name, path_to_vdi, flag)

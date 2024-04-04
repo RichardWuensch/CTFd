@@ -1,7 +1,6 @@
 import os.path
 import subprocess
 
-import paramiko
 from marshmallow import validate
 from marshmallow.exceptions import ValidationError
 from marshmallow_sqlalchemy import field_for
@@ -25,6 +24,7 @@ class ChallengeRequirementsValidator(validate.Validator):
                 "Challenge requirements cannot have a null prerequisite"
             )
         return value
+
 
 class ChallengeVMValidator(validate.Validator):
     def __call__(self, value):
@@ -52,14 +52,16 @@ class ChallengeVMValidator(validate.Validator):
         else:
             raise ValidationError("VM name didn't exists in VirtualBox")
 
+
 class ChallengeVictimsConnectionValidator(validate.Validator):
     def __call__(self, value):
         if value == "" or value is None:
             return value
-        elif os.path.exists(value+'newFlag.sh'):
+        elif os.path.exists(value + 'newFlag.sh'):
             return value
         else:
             raise ValidationError("newFlag.sh is not available in the given folder")
+
 
 class ChallengeSchema(ma.ModelSchema):
     class Meta:
