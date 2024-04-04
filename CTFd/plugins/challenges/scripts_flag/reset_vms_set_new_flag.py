@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 '''This script needs the api-token from an Admin to run
     This script reset all Challenges that are available in the DB with a Path to the .vdi file
     and set new flags inside of the vms and the DB
