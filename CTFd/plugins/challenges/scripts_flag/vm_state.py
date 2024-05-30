@@ -36,19 +36,20 @@ if len(sys.argv) == 2:
             if c.get('victims_connection') == "" or c.get('victims_connection') is None:
                 continue
             else:
-                vm_name = c.get('vm_name')
-                print(vm_name)
-                result = subprocess.run(['VBoxManage', 'showvminfo', vm_name, '--machinereadable'], capture_output=True, text=True)
-
-                # Den Output nach dem VM-Status durchsuchen
-                for line in result.stdout.splitlines():
-                   if line.startswith('VMState='):
-                       # Extrahiere den Status
-                       status = line.split('=')[1].strip('"')
-                       print(status)
-                       if status != "running":
-                          response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
-                          flag = response.json()['data'][0]
-                          change_flag(c.get('victims_connection'), vm_name, flag)
+                state = requests.get(url + 'challenges/' + str(c['id']), headers=headers).json()['data']
+                if state.get('state') == 'visible':
+                    vm_name = c.get('vm_name')
+                    result = subprocess.run(['VBoxManage', 'showvminfo', vm_name, '--machinereadable'], capture_output=True, text=True)
+                    # Den Output nach dem VM-Status durchsuchen
+                    for line in result.stdout.splitlines():
+                       if line.startswith('VMState='):
+                          # Extrahiere den Status
+                          status = line.split('=')[1].strip('"')
+                          if status != "running":
+                             response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
+                             flag = response.json()['data'][0]
+                             change_flag(c.get('victims_connection'), vm_name, flag)
+                else:
+                    continue
 else:
     pass

@@ -41,8 +41,12 @@ if len(sys.argv) == 2:
             if c.get('victims_connection') == "" or c.get('victims_connection') is None:
                 continue
             else:
-                response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
-                flag = response.json()['data'][0]
-                change_flag(c.get('victims_connection'), c.get('vm_name'), flag)
+                state = requests.get(url + 'challenges/' + str(c['id']), headers=headers).json()['data']
+                if state.get('state') == 'visible':
+                    response = requests.get(url + 'challenges/' + str(c['id']) + '/flags', headers=headers)
+                    flag = response.json()['data'][0]
+                    change_flag(c.get('victims_connection'), c.get('vm_name'), flag)
+                else:
+                    continue
 else:
     pass
