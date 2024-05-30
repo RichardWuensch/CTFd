@@ -45,10 +45,7 @@ class ChallengeVMValidator(validate.Validator):
                     key = parts[0].strip()
                     value = parts[1].strip()
                     vm_info[key] = value
-            if vm_info["VMState"].strip('"') == "running":
-                return value
-            else:
-                raise ValidationError("VM exists but is not running")
+            return value
         else:
             raise ValidationError("VM name didn't exists in VirtualBox")
 
